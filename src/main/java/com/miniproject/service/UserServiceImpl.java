@@ -22,12 +22,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private KeycloakUserService keycloakUserService;
 
-
-
-    @Transactional
+    @Override
     public User createUser(UserDTO userDTO) {
 
         User user = new User();
@@ -37,24 +33,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(userDTO.getRole());
 
         log.info("Saving user to the database: {}", user);
-        User savedUser = userRepository.save(user);
-
-        String keycloakUserId = null;
-        try {
-            log.info("Creating user in Keycloak: {}", user);
-            keycloakUserId = keycloakUserService.createUser(
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    user.getRole(),
-                    userDTO.getAttributes()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating user in Keycloak: " + e.getMessage());
-        }
-
-        savedUser.setKeycloakUserId(keycloakUserId);
-        return userRepository.save(savedUser);
+       return userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
@@ -65,38 +44,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
-    public Optional<User> getUserByKeycloakUserId(String keycloakUserId) {
-        return userRepository.findByKeycloakUserId(keycloakUserId);
-    }
-
     @Transactional
     public User updateUser(Long userId, User updatedUser) {
         return userRepository.findById(userId).map(existingUser -> {
             // Update local user details
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setEmail(updatedUser.getEmail());
-            User savedUser = userRepository.save(existingUser);
-
-            // Update user in Keycloak
-            keycloakUserService.updateUser(
-                    existingUser.getKeycloakUserId(),
-                    updatedUser.getUsername(),
-                    updatedUser.getEmail(),
-                    updatedUser.getPassword(),
-                    updatedUser.getRole()
-            );
-
-            return savedUser;
+            return userRepository.save(existingUser);
         }).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
     }
 
     @Transactional
     public void deleteUser(Long userId) {
         userRepository.findById(userId).ifPresent(user -> {
-            // Delete user from Keycloak
-            keycloakUserService.deleteUser(user.getKeycloakUserId());
-
-            // Delete user from local database
             userRepository.delete(user);
         });
     }

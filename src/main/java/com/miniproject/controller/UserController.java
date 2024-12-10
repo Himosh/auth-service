@@ -55,17 +55,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{keycloakUserId}")
-    @Operation(summary = "Get user by ID", description = "Get user by ID")
-    public ResponseEntity<User> getUserById(@PathVariable String keycloakUserId) {
-        try {
-            User user = userService.getUserByKeycloakUserId(keycloakUserId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving user: " + e.getMessage());
-        }
-    }
 
     @PutMapping("/{userId}")
     @Operation(summary = "Update user", description = "Update user by ID")

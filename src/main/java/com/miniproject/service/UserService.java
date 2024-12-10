@@ -12,7 +12,6 @@ public interface UserService {
     User createUser(UserDTO userDTO);
     User updateUser(Long userId, User updatedUser);
     void deleteUser(Long userId);
-    Optional<User> getUserByKeycloakUserId(String keycloakUserId);
     Optional<User> getUserById(Long userId);
     List<User> getAllUsers();
 }

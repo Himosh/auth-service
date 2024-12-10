@@ -18,6 +18,5 @@ public class UserDTO {
     private String username;
     private String password;
     private String email;
-    private String role;
-    private Map<String, List<String>> attributes;
+    private Role role;
 }
