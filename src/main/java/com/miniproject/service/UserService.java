@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService {
-    User createUser(UserDTO userDTO, Map<String, List<String>> attributes);
+    User createUser(UserDTO userDTO);
     User updateUser(Long userId, User updatedUser);
     void deleteUser(Long userId);
     Optional<User> getUserByKeycloakUserId(String keycloakUserId);

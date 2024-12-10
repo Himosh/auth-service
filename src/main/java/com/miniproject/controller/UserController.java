@@ -22,12 +22,10 @@ public class UserController {
 
     @PostMapping("/create")
     @Operation(summary = "Create a new user", description = "Create a new user with the given attributes")
-    public ResponseEntity<User> createUser(
-            @RequestBody Map<String,List<String>> attributes,
-            @RequestBody UserDTO userDTO) {
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         try {
             log.info("Creating user: {}", userDTO);
-            User user = userService.createUser(userDTO, attributes);
+            User user = userService.createUser(userDTO);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
             throw new RuntimeException("Error creating user: " + e.getMessage());

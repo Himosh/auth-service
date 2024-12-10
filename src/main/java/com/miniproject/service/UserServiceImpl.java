@@ -2,6 +2,7 @@ package com.miniproject.service;
 
 import com.miniproject.model.dto.UserDTO;
 import com.miniproject.model.enums.Role;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import com.miniproject.model.User;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,22 +25,33 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private KeycloakUserService keycloakUserService;
 
-    @Autowired
-    private ModelMapper modelMapper;
+
 
     @Transactional
-    public User createUser(UserDTO userDTO, Map<String, List<String>> attributes) {
+    public User createUser(UserDTO userDTO) {
 
-        User user = modelMapper.map(userDTO, User.class);
+        User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setRole(userDTO.getRole());
+
+        log.info("Saving user to the database: {}", user);
         User savedUser = userRepository.save(user);
 
-        String keycloakUserId = keycloakUserService.createUser(
-                user.getUsername(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getRole().toString(),
-                attributes
-        );
+        String keycloakUserId = null;
+        try {
+            log.info("Creating user in Keycloak: {}", user);
+            keycloakUserId = keycloakUserService.createUser(
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getRole(),
+                    userDTO.getAttributes()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating user in Keycloak: " + e.getMessage());
+        }
 
         savedUser.setKeycloakUserId(keycloakUserId);
         return userRepository.save(savedUser);
@@ -70,7 +83,7 @@ public class UserServiceImpl implements UserService {
                     updatedUser.getUsername(),
                     updatedUser.getEmail(),
                     updatedUser.getPassword(),
-                    updatedUser.getRole().toString()
+                    updatedUser.getRole()
             );
 
             return savedUser;

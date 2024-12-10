@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Service
 public class KeycloakUserService {
-
     private final Keycloak keycloak;
 
     @Value("${keycloak.realm}")
