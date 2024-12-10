@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    environment:
+      DB_VENDOR: mysql
+      DB_ADDR: keycloak-db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloakpassword
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: adminpassword
+    ports:
+      - 8080:8080
+    command:
+      - start-dev
+
+  keycloak-db:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: keycloakpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - 3307:3306

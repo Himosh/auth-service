@@ -1,0 +1,45 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: userservice
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_service
+    username: root
+    password: Himosh1020
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: user-service
+#            client-secret: BUOeqXndMdgbe3jEslTozNQftOkeHZ5z
+#            authorization-grant-type: authorization_code
+#            scope: openid
+#        provider:
+#          keycloak:
+#            issuer-uri: http://localhost:8080/realms/rishad
+#            user-name-attribute: preferred_username
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8080/realms/rishad
+
+keycloak:
+  auth-server-url: http://localhost:8080
+  realm: rishad
+  client-id: admin-cli
+  grant-type: password
+  username: admin
+  password: 12345
+
