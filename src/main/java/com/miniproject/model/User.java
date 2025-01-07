@@ -1,6 +1,5 @@
 package com.miniproject.model;
 
-import com.miniproject.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
